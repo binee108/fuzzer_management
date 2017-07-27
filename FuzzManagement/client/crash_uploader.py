@@ -29,7 +29,7 @@ def get_config_info():
     else : 
         print "The fuzz_config.conf file does not exist."
 
-    return {'fuzz_name':fuzz_name, 'fuzz_target':fuzz_target, 'fuzz_version':fuzz_version, 'server_ip':server_ip, 'build_state', build_state}
+    return {'fuzz_name':fuzz_name, 'fuzz_target':fuzz_target, 'fuzz_version':fuzz_version, 'server_ip':server_ip}
 
 def crash_upload(config_info):
     url = "http://%s:%s/management/crash_upload"%(server_ip, server_port)
@@ -51,7 +51,7 @@ def start_main():
     config_info = get_config_info()
     crash_upload(config_info)
 
-if __name__ = "__main__":
+if __name__ == "__main__":
     if len(sys.argv) < 2:
         print "[*] usage : python crash_uploader.py [crash_dump_file_path] [crash_input_file_path]"
         crash_dump_file_path = sys.argv[1]
