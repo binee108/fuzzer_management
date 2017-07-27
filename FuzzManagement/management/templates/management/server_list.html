@@ -1,0 +1,28 @@
+<p> Server list </p>
+
+<table>
+  <tr>
+    <th>FuzzName</th>
+    <th>FuzzIP</th>
+    <th>TargetApp</th>
+    <th>Version</th>
+    <th>WorkingStatus</th>
+    <th>LastConnection</th>
+    <th>ConnectionStatus</th>
+  </tr>
+  {% for mfuzz in mfuzz_server %}
+  <tr>
+    <td>{{mfuzz.fuzz_name}}</td>
+    <td>{{mfuzz.fuzz_ip}}</td>
+    <td>{{mfuzz.fuzz_target}}</td>
+    <td>{{mfuzz.fuzz_version}}</td>
+    <td>{{mfuzz.working_status}}</td>
+    <td>{{mfuzz.last_connection_time}}</td>
+    {% if timedelay < mfuzz.last_connection_time  %}
+    <td>on</td>
+    {% else %}
+    <td>off</td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+</table>
