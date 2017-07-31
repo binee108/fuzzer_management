@@ -11,7 +11,7 @@ class Fuzz_server(models.Model):
     fuzz_target = models.CharField(max_length=100)
     fuzz_version = models.CharField(max_length=100)
     last_connection_time = models.DateTimeField(auto_now_add=True)
-    working_status = models.BooleanField(default=False)
+    last_working_time = models.DateTimeField(default=False)
 
 class Crash_info(models.Model):
     fuzz_server = models.ForeignKey(Fuzz_server)

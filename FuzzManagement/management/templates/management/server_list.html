@@ -16,13 +16,20 @@
     <td>{{mfuzz.fuzz_ip}}</td>
     <td>{{mfuzz.fuzz_target}}</td>
     <td>{{mfuzz.fuzz_version}}</td>
-    <td>{{mfuzz.working_status}}</td>
+
+    {% if timedelay < mfuzz.last_working_time  %}
+    <td>on</td>
+    {% else %}
+    <td>off</td>
+    {% endif %}
+
     <td>{{mfuzz.last_connection_time}}</td>
     {% if timedelay < mfuzz.last_connection_time  %}
     <td>on</td>
     {% else %}
     <td>off</td>
     {% endif %}
+    
   </tr>
   {% endfor %}
 </table>

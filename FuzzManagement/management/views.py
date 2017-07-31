@@ -22,7 +22,7 @@ import os
 def server_info(request):
     mfuzz_server = Fuzz_server.objects.all()
     template = loader.get_template('management/server_list.html')
-    timedelay = timezone.now() - timezone.timedelta(minutes=1)
+    timedelay = timezone.now() - timezone.timedelta(minutes=30)
     context = {
         'mfuzz_server': mfuzz_server,
         'timedelay':timedelay
@@ -51,7 +51,8 @@ def connect_ping(request):
     mfuzz_server.fuzz_ip = request.POST['fuzz_ip']
     mfuzz_server.fuzz_target = request.POST['fuzz_target']
     mfuzz_server.fuzz_version = request.POST['fuzz_version']
-    mfuzz_server.working_status = request.POST['working_status']
+    if request.POST['working_status']:
+        mfuzz_server.last_working_time = timezone.now()
     mfuzz_server.last_connection_time = timezone.now()
     mfuzz_server.save()
     return HttpResponse("Connect Success")
@@ -74,6 +75,7 @@ def crash_upload(request):
     try :
         mfuzz = Fuzz_server.objects.get(fuzz_name = request.POST['fuzz_name'])
     except : 
+        print "Check fuzz_name in fuzz_config.conf file."
         return HttpResponse('Check fuzz_name in fuzz_config.conf file.')
     
     # file save & create url
