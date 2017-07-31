@@ -9,6 +9,7 @@
     <th>WorkingStatus</th>
     <th>LastConnection</th>
     <th>ConnectionStatus</th>
+    <th>Command</th>
   </tr>
   {% for mfuzz in mfuzz_server %}
   <tr>
@@ -29,7 +30,30 @@
     {% else %}
     <td>off</td>
     {% endif %}
-    
+    <td>
+      <form action="/management/request_command" method="POST">
+      {% csrf_token %}
+        <input type="hidden" name="fuzz_name" value="{{mfuzz.fuzz_name}}"> 
+        <input type="hidden" name="command" value="start">
+        <input type="submit" name="start_button" value="start">
+      </form>
+    </td>
+    <td>
+      <form action="/management/request_command" method="POST">
+      {% csrf_token %}
+        <input type="hidden" name="fuzz_name" value="{{mfuzz.fuzz_name}}"> 
+        <input type="hidden" name="command" value="stop">
+        <input type="submit" name="stop_button" value="stop">
+      </form>
+    </td>
+    <td>
+      <form action="/management/request_command" method="POST">
+      {% csrf_token %}
+        <input type="hidden" name="fuzz_name" value="{{mfuzz.fuzz_name}}"> 
+        <input type="hidden" name="command" value="reboot">
+        <input type="submit" name="stop_button" value="reboot">
+      </form>
+    </td>
   </tr>
   {% endfor %}
 </table>

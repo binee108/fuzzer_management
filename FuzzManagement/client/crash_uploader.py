@@ -1,14 +1,13 @@
+# -*- coding: utf-8 -*-
 import os,sys
 import urllib2
 import threading
 import time
 import subprocess
-import ConfigParser
-# -*- coding: utf-8 -*-
-
 import re
 import requests
 
+import ConfigParser
 
 def get_config_info():
     config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),'fuzz_config.conf')
@@ -53,12 +52,15 @@ def crash_upload(config_info, crash_dump_file_path, crash_input_file_path):
     }
     try : 
         r = requests.post(url = url, data = data)
+        response = r.text
+        print response
     except :
-        print "url : %s"%url
-        print "crash_dump size : %d"%len(data['crash_dump'])
-        print "input_data size : %d"%len(data['input_data'])
-    response = r.text
-    print response
+        print "crash_upload() request.post Error"
+    print "url : %s"%url
+    print "config_info['fuzz_name'] : %s"%config_info['fuzz_name']
+    print "crash_dump size : %d"%len(data['crash_dump'])
+    print "input_data size : %d"%len(data['input_data'])    
+    
 
 def start_main(crash_dump_file_path, crash_input_file_path):
     config_info = get_config_info()

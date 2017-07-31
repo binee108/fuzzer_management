@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import loader
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -12,6 +12,8 @@ from django.utils import timezone
 
 from management.models import Fuzz_server
 from management.models import Crash_info
+from management.models import Command_info
+
 from .util_func import handle_uploaded_file
 
 from time import time
@@ -73,7 +75,7 @@ def crash_upload(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed('Use the POST method to send.')
     try :
-        mfuzz = Fuzz_server.objects.get(fuzz_name = request.POST['fuzz_name'])
+        mFuzz = Fuzz_server.objects.get(fuzz_name = request.POST['fuzz_name'])
     except : 
         print "Check fuzz_name in fuzz_config.conf file."
         return HttpResponse('Check fuzz_name in fuzz_config.conf file.')
@@ -101,12 +103,33 @@ def crash_upload(request):
     print "input_data_url : " + input_data_url
 
     # Save the crash info to the DB.
-    crash = Crash_info()
-    crash.fuzz_server = mfuzz
-    crash.crash_hash = "test_temp_data"
-    crash.crash_dump = crash_dump_url
-    crash.input_data = input_data_url
-    crash.save()
+    mCrash = Crash_info()
+    mCrash.fuzz_server = mFuzz
+    mCrash.crash_hash = "test_temp_data"
+    mCrash.crash_dump = crash_dump_url
+    mCrash.input_data = input_data_url
+    mCrash.save()
     return HttpResponse('Upload Seccuss')
 
+@csrf_exempt
+def command_polling(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed('Use the POST method to send.')
+    request.POST['fuzz_name']
+
+def request_command(request):
+    command_list = ['build', 'start', 'stop', 'reboot']
+    if request.method != 'POST':
+        return HttpResponseNotAllowed('Use the POST method to send.')
+    if not request.POST['command'] in command_list:
+        return HttpResponseNotAllowed('Invaild command.')
+
+    mFuzz = Fuzz_server.objects.get(fuzz_name = request.POST['fuzz_name'])
+    mCommand = Command_info()
+    mCommand.fuzz_server = mFuzz
+    print request.POST['command']
+    if request.POST['command'] in command_list:
+        mCommand.command = request.POST['command']
+    mCommand.save()
+    return redirect('/management')
 

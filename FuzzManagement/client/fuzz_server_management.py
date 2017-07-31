@@ -4,9 +4,10 @@ import urllib2
 import threading
 import time
 import subprocess
-import ConfigParser
 import re
 import requests
+
+import ConfigParser
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 

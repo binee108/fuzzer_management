@@ -20,6 +20,11 @@ class Crash_info(models.Model):
     input_data = models.CharField(max_length=128)
     report_time = models.DateTimeField(auto_now_add=True)
 
+class Command_info(models.Model):
+    fuzz_server = models.ForeignKey(Fuzz_server)
+    command = models.CharField(max_length=128)
+    request_time = models.DateTimeField(auto_now_add=True)
+
 # class ModelWithFileField(models.Model):
 #     title = models.CharField(max_length=50)
 #     file = models.FileField(upload_to='documens/%Y/%m/%d')
