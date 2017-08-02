@@ -39,11 +39,13 @@ def crash_upload(config_info, crash_dump_file_path, crash_input_file_path):
             crash_dump_data = f.read()
     except :
         print "crash_dump_file_path open failed"
+        exit(1)
     try :
         with open(crash_input_file_path,'rb') as f:
             crash_input_data = f.read()
     except :
         print "crash_input_file_path open failed"
+        exit(1)
 
     data = {
     'fuzz_name':config_info['fuzz_name'],
@@ -56,10 +58,10 @@ def crash_upload(config_info, crash_dump_file_path, crash_input_file_path):
         print response
     except :
         print "crash_upload() request.post Error"
-    print "url : %s"%url
-    print "config_info['fuzz_name'] : %s"%config_info['fuzz_name']
-    print "crash_dump size : %d"%len(data['crash_dump'])
-    print "input_data size : %d"%len(data['input_data'])    
+        exit(1)
+    # print "config_info['fuzz_name'] : %s"%config_info['fuzz_name']
+    # print "crash_dump size : %d"%len(data['crash_dump'])
+    # print "input_data size : %d"%len(data['input_data'])    
     
 
 def start_main(crash_dump_file_path, crash_input_file_path):

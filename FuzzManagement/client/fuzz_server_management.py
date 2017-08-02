@@ -45,9 +45,55 @@ class ConnectPing:
                 print "[*] - Check Web server running"
             time.sleep(60)
             
-
     def start(self):
         th = threading.Thread(target = self.connect_ping)
+        th.start()
+        return th
+
+class CommandListen:
+    def __init__(self, config_info):
+        self.config_info = config_info
+
+    def command_process(self, commnad, args=None):
+        if commnad is 'build':
+            fuzz_build()
+        elif command is 'start':
+            fuzz_start()
+        elif command is 'stop':
+            fuzz_stop()
+        elif command is 'reboot':
+            fuzz_reboot()
+        elif command is 'commit_search':
+            if not args is None:
+                fuzz_commit_search()
+            else :
+                print "args empty!"
+
+    def polling_request(self):
+        command_list = ['build', 'start', 'stop', 'reboot']
+        self.url = "http://%s:%s/management/command_polling"%(self.config_info['server_ip'], self.config_info['server_port'])
+        self.data = {
+        'fuzz_name' : self.config_info['fuzz_name'],
+        }
+
+        while(1):
+            try :                 
+                r = requests.post(url = self.url, data = self.data)
+                response = r.text
+            except:
+                print "[*] - Check Web server running"
+                time.sleep(5)
+                continue
+            if response in command_list:   
+                print "command : " + response # debug code
+                self.command_process(command)
+            else :
+                if not "EMPTY" in response :
+                    print "Response Error"
+                time.sleep(5)
+
+    def start(self):
+        th = threading.Thread(target = self.polling_request)
         th.start()
         return th
 
@@ -74,12 +120,9 @@ def get_config_info():
 
     return {'fuzz_name':fuzz_name, 'fuzz_target':fuzz_target, 'fuzz_version':fuzz_version, 'server_ip':server_ip, 'server_port':server_port}
 
-def command_listen():
-    pass
-    ####### long polling or socket방식으로 구현 #######
-
 def fuzz_build():
     output = subprocess.Popen(['./setup.sh',],stdout=subprocess.PIPE)
+
 def fuzz_start():
     if not fuzz_working_check():
         execute_file = os.path.join(base_path, "fuzz","fuzzer.py")
@@ -99,6 +142,16 @@ def fuzz_reboot():
         os.system('kill -9 %s'%output[0])
     os.system('reboot')
 
+def fuzz_commit_search(crash_input_file):
+    pass
+    if not fuzz_working_check() :
+        fuzz_stop()
+        commit_version = subprocess.Popen(['python','fuzz/searcher.py', crash_input_file],stdout=subprocess.PIPE).communicate()
+    else :
+        commit_version = subprocess.Popen(['python','fuzz/searcher.py', crash_input_file],stdout=subprocess.PIPE).communicate()
+        
+
+
 def fuzz_working_check():
     execute_file = os.path.join(base_path, "fuzz","fuzzer.py")
     output = subprocess.Popen(['pgrep','-f',execute_file],stdout=subprocess.PIPE).communicate()
@@ -110,11 +163,14 @@ def fuzz_working_check():
         return False
 
 def start_main():
+    th = []
     config_info = get_config_info()
-    th = ConnectPing(config_info).start()
+    th.append(ConnectPing(config_info).start())
+    th.append(CommandListen(config_info).start())
     fuzz_start()
     time.sleep(1)
-    th.join()
+    for thread in th:
+        thread.join()
 
 if __name__ == "__main__":
     start_main()
