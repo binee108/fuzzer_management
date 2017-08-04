@@ -1,0 +1,8 @@
+<p> Crash list </p>
+
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{server_modify_form.as_p}}
+  <button type="submit">modify</button>
+</form>

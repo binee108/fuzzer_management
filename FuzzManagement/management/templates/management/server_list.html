@@ -2,8 +2,9 @@
 
 <table>
   <tr>
-    <th>FuzzName</th>
-    <th>FuzzIP</th>
+    <th>ServerName</th>
+    <th>ServerIP</th>
+    <th>FuzzerName</th>
     <th>TargetApp</th>
     <th>Version</th>
     <th>WorkingStatus</th>
@@ -11,10 +12,11 @@
     <th>ConnectionStatus</th>
     <th>Command</th>
   </tr>
-  {% for mfuzz in mfuzz_server %}
-  <tr>
-    <td>{{mfuzz.fuzz_name}}</td>
-    <td>{{mfuzz.fuzz_ip}}</td>
+  {% for mfuzz in m_fuzz_server %}
+  <tr style="cursor:hand;" onclick="location.href='/server/modify/{{mfuzz.id}}'">
+    <td>{{mfuzz.server_name}}</td>
+    <td>{{mfuzz.server_ip}}</td>
+    <td>{{mfuzz.fuzzer.fuzzer_name}}
     <td>{{mfuzz.fuzz_target}}</td>
     <td>{{mfuzz.fuzz_version}}</td>
 
@@ -55,5 +57,6 @@
       </form>
     </td>
   </tr>
+  </a>
   {% endfor %}
 </table>

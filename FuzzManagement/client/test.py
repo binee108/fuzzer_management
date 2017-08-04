@@ -16,20 +16,14 @@ import requests
 # response = r.text
 # print response
 
-
-    # fuzz_server = models.ForeignKey(Fuzz_server)
-    # crash_hash = models.CharField(max_length=128)
-    # crash_dump = models.CharField(max_length=128)
-    # input_data = models.CharField(max_length=128)
-    # report_time = models.DateTimeField(auto_now_add=True)
-
-url = "http://127.0.0.1:8000/management/crash_upload"
+url = "http://127.0.0.1:8000/test_upload"
 data = {
-'fuzz_name':"test1",
-'crash_hash':"test value",
-'crash_dump':"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-'input_data':"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+	"test_name": "hello test name",
+	"fuzz_name": "fuzz1"
 }
-r = requests.post(url = url, data = data)
+multiple_files = [
+	('test_file_1', ('foo.txt', open('crash_uploader.py', 'rb'), 'text/plain'))
+]
+r = requests.post(url=url, data=data, files=multiple_files)
 response = r.text
 print response
