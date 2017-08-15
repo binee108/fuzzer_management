@@ -1,0 +1,15 @@
+<p> Fuzzer list </p>
+<table>
+  <tr>
+    <th>FuzzerName</th>
+    <th>TargetApp</th>
+    <th>BuildScript</th>
+  </tr>
+  {% for mfuzzer in m_fuzzers %}
+  <tr style="cursor:hand;" onclick="location.href='/fuzzer/modify/{{mfuzzer.id}}'">
+    <td>{{mfuzzer.fuzzer_name}}</td>
+    <td>{{mfuzzer.app_name}}</td>
+    <td><a href={{mfuzzer.build_script.url}} download>{{mfuzzer.build_script.name}}</a></td>
+  </tr>
+  {% endfor %}
+</table>

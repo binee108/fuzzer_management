@@ -1,0 +1,3 @@
+*.pyc
+*.sqlite3
+FuzzManagement/media/crash_info/*
