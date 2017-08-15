@@ -1,0 +1,49 @@
+<p> Crash list </p>
+<table>
+  <tr>
+    <th>ServerName</th>
+    <th>ServerIP</th>
+    <th>TargetApp</th>
+    <th>Version</th>
+    <th>crash_hash</th>
+    <th>crash_reliable</th>
+    <th>regressions_version</th>
+    <th>crash_dump</th>
+    <th>test_case</th>
+    <th>report_time</th>
+    <th>Regression Search</th>
+    <th>Issue Forward</th>
+  </tr>
+  {% for m_crash in m_crash_list %}
+  <tr>
+    <td>{{m_crash.fuzz_server.server_name}}</td>
+    <td>{{m_crash.fuzz_server.server_ip}}</td>
+    <td>{{m_crash.fuzz_server.fuzz_target}}</td>
+    <td>{{m_crash.fuzz_server.fuzz_version}}</td>
+    <td>{{m_crash.crash_hash}}</td>
+    <td>{{m_crash.crash_reliable}}</td>
+    <td>{{m_crash.regressions_version}}</td>
+    <td><a href={{m_crash.crash_dump.url}}> crash dump </a></td>
+    <td><a href={{m_crash.test_case.url}}> testcase </a></td>
+    <td>{{m_crash.report_time}}</td>
+    <td>
+      <form action="/manage/request_command" method="POST" style="float:left">
+        {% csrf_token %}
+        <input type="hidden" name="server_id" value="{{m_crash.fuzz_server.id}}">
+        <input type="hidden" name="crash_id" value="{{m_crash.id}}">
+        <input type="hidden" name="type" value="crash_list">
+        <input type="hidden" name="command" value="regression">
+        <input type="submit" name="regression" value="Regression Search">
+      </form>
+    </td>
+    <td>
+      <form action="/crash/forward" method="POST" style="float:left">
+        {% csrf_token %}
+        <input type="hidden" name="crash_id" value="{{m_crash.id}}"> 
+        <input type="submit" name="forward" value="Forward">
+      </form>
+    </td>
+  </tr>
+      
+  {% endfor %}
+</table>

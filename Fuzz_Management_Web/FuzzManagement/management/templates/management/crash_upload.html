@@ -1,0 +1,22 @@
+<p> Crash list </p>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{crash_upload_form.as_p}}
+  <button type="submit">Request</button>
+</form>
+<table>
+  <tr>
+    <th>server_name</th>
+    <th>crash_dump</th>
+    <th>test_case</th>
+    <th>report_time</th>
+  </tr>
+  {% for i in m_crash %}
+  <tr>
+    <td>{{i.fuzz_server.server_name}}</td>
+    <td><a href="{{i.crash_dump.url}}">{{i.crash_dump.name}}</a></td>
+    <td><a href="{{i.test_case.url}}">{{i.test_case.name}}</a></td>
+    <td>{{i.report_time}}</td>
+  </tr>
+  {% endfor %}
+</table>

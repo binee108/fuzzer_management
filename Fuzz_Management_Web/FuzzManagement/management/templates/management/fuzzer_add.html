@@ -1,0 +1,7 @@
+<p> Fuzzer Add </p>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{fuzzer_add_form.as_p}}
+  <button type="submit">add</button>
+</form>
