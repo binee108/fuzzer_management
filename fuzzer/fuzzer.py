@@ -12,7 +12,6 @@ import util.CrashInfo as CrashInfo
 import util.fileManipulation
 import util.setting_parser
 import util.commit_searcher
-import util.crash_hash
 import util.common_tools as common_tools
 
 ASAN_EXIT_CODE = 77

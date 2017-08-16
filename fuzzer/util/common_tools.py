@@ -5,6 +5,7 @@ import resource
 import subprocess
 import sys
 import time
+import CrashInfo
 
 
 def timeout_kill(p):
@@ -83,7 +84,7 @@ def reliable_crash_chk(execute_file, input_file, repeat=10, timeout=300):
     count = 0
     for i in xrange(repeat):
         return_data = run_timeout(command_with_args, time_out_limit=timeout)
-        crash_chk = is_crash(return_data['killed'], return_data['result_code'])
+        crash_chk = CrashInfo.is_crash(return_data['killed'], return_data['result_code'])
 
         if crash_chk:
             count += 1

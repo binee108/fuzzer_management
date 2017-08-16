@@ -23,10 +23,10 @@ class Fuzz_server(models.Model):
 
 class Crash_info(models.Model):
     fuzz_server = models.ForeignKey(Fuzz_server)
-    crash_hash = models.CharField(max_length=100, blank=True, null=True)
+    crash_hash = models.CharField(max_length=100)
     crash_dump = models.FileField(upload_to="crash_dump")
     test_case = models.FileField(upload_to="test_case")
-    crash_reliable = models.CharField(max_length=100, blank=True, null=True)
+    reliable = models.CharField(max_length=100)
     regression_version = models.CharField(max_length=100, blank=True, null=True)
     report_time = models.DateTimeField(auto_now_add=True)
 
