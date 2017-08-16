@@ -27,9 +27,9 @@ def get_signal_name(num, default=None):
     return default
 
 
-def crash_result(child, LogPrefix, progfullname, input_file):
+def crash_result(child, LogPrefix, progfullname, testcase):
     util.CrashInfo.grab_crashlog(progfullname, child.pid, LogPrefix, True)
-    [before, after] = util.fileManipulation.fuzzSplice(input_file)
+    [before, after] = util.fileManipulation.fuzzSplice(testcase)
     try:
         with open(LogPrefix + '-out.txt', 'rb') as f:
             newfileLines = before + [l.replace('/*FRC-', '/*') for l in util.fileManipulation.linesStartingWith(f, "/*FRC-")] + after
@@ -40,26 +40,26 @@ def crash_result(child, LogPrefix, progfullname, input_file):
         print "[*] - crash_result() Error"
         return None, None
     crash_dump = LogPrefix + "-crash.txt"
-    ori_input_file = LogPrefix + "-orig.js"
-    return crash_dump, ori_input_file
+    ori_testcase = LogPrefix + "-orig.js"
+    return crash_dump, ori_testcase
 
 
-def reliable_check(excute_file, input_file):
-    crash_reliable = util.common_tools.reliable_crash_chk(excute_file, input_file, 10)
+def reliable_check(excute_file, testcase):
+    crash_reliable = util.common_tools.reliable_crash_chk(excute_file, testcase, 10)
     print "[*] Crash " + crash_reliable
     return crash_reliable
 
 
-def crash_upload(LogPrefix, crash_dump, input_file, crash_hash, reliable):
+def crash_upload(LogPrefix, crash_dump, testcase, crash_hash, reliable):
     command_with_args = []
     crash_uploader_path = os.path.normpath(os.path.join(file_path, "../crash_uploader.py"))
     command_with_args.append('python')
     command_with_args.append(crash_uploader_path)
     command_with_args.append(crash_dump)
-    command_with_args.append(input_file)
+    command_with_args.append(testcase)
     command_with_args.append(crash_hash)
     command_with_args.append(reliable)
-    output = subprocess.Popen(['python', crash_uploader_path, crash_dump, input_file], stdout=subprocess.PIPE).communicate()
+    output = subprocess.Popen(['python', crash_uploader_path, crash_dump, testcase, crash_hash, reliable], stdout=subprocess.PIPE).communicate()
     if "Seccuss" in output[0]:
         os.remove(LogPrefix + "-crash.txt")
         os.remove(LogPrefix + "-out.txt")
@@ -93,19 +93,19 @@ def start_fuzz(command_with_args, log_path, time_out_limit=300):
 
         if is_crash is True:
             progfullname = os.path.normpath(os.path.expanduser(command_with_args[0]))
-            input_file = os.path.abspath(command_with_args[1])
-            crash_dump, ori_input_file = crash_result(return_data['child'], LogPrefix, progfullname, input_file)
-            if crash_dump is None or ori_input_file is None:
+            testcase = os.path.abspath(command_with_args[1])
+            crash_dump, ori_testcase = crash_result(return_data['child'], LogPrefix, progfullname, testcase)
+            if crash_dump is None or ori_testcase is None:
                 continue
-            reliable = reliable_check(command_with_args[0], ori_input_file)
+            reliable = reliable_check(command_with_args[0], ori_testcase)
             if reliable == "Reliable":
                 pass
                 # print "Reliable start commit search!"
-                # commit_version = util.commit_searcher.search(ori_input_file)
+                # commit_version = util.commit_searcher.search(ori_testcase)
                 # if not commit_version is None:
                 #     print "Found commit version!"
             crash_hash = CrashInfo.crash_dump_hash(crash_dump)
-            crash_upload(LogPrefix, crash_dump, ori_input_file, crash_hash, reliable)
+            crash_upload(LogPrefix, crash_dump, ori_testcase, crash_hash, reliable)
         else:
             os.remove(LogPrefix + "-out.txt")
             os.remove(LogPrefix + "-err.txt")
@@ -116,8 +116,8 @@ def main():
     setting_info = util.setting_parser.get_setting_config()
     exec_directory = os.path.join(file_path, setting_info['exec_directory'])
     excute_file = os.path.join(exec_directory, setting_info['execute_target'])
-    input_file = os.path.join(file_path, setting_info['input_file'])
-    command_with_args = [excute_file, input_file]
+    testcase = os.path.join(file_path, setting_info['testcase'])
+    command_with_args = [excute_file, testcase]
 
     # v8 setting settig.
     if not os.path.exists(exec_directory):

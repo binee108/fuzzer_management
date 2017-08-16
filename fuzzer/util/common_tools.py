@@ -79,8 +79,8 @@ def run_timeout(command_with_args, uselog_files=False, child_stdout=None, child_
     return return_data
 
 
-def reliable_crash_chk(execute_file, input_file, repeat=10, timeout=300):
-    command_with_args = [execute_file, input_file]
+def reliable_crash_chk(execute_file, testcase, repeat=10, timeout=300):
+    command_with_args = [execute_file, testcase]
     count = 0
     for i in xrange(repeat):
         return_data = run_timeout(command_with_args, time_out_limit=timeout)

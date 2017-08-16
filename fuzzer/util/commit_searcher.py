@@ -50,7 +50,7 @@ def all_list_get():
     return all_version_list
 
 
-def lkgr_searching(v8_current_lkgr_version, lkgr_vlist, all_vlist, crash_input_file):
+def lkgr_searching(v8_current_lkgr_version, lkgr_vlist, all_vlist, crash_testcase):
     start_index, end_index = 0, 0
     current_lkgr_index = lkgr_vlist.index(v8_current_lkgr_version)
     use_lkgr_vlist = lkgr_vlist[:current_lkgr_index]
@@ -58,7 +58,7 @@ def lkgr_searching(v8_current_lkgr_version, lkgr_vlist, all_vlist, crash_input_f
     pre_lkgr_version = lkgr_vlist[current_lkgr_index]
     for lkgr_version in use_lkgr_vlist:
         print "[*] - lkgr version search %s" % (lkgr_vlist[lkgr_version])
-        check = crash_check(lkgr_version, crash_input_file)
+        check = crash_check(lkgr_version, crash_testcase)
         if check is False:
             start_index = all_vlist.index(lkgr_version)
             end_index = all_vlist.index(pre_lkgr_version)
@@ -70,14 +70,14 @@ def lkgr_searching(v8_current_lkgr_version, lkgr_vlist, all_vlist, crash_input_f
     return start_index, end_index
 
 
-def binary_searching(start_index, end_index, all_vlist, crash_input_file):
+def binary_searching(start_index, end_index, all_vlist, crash_testcase):
     start = start_index
     end = end_index
     print "[*] - binary search start : %s - > %s" % (all_vlist[start], all_vlist[end])
     while start < end:
         print "[*] - %s <-> %s" % (all_vlist[start], all_vlist[end])
         mid = (start + end) / 2
-        if crash_check(all_vlist[mid], crash_input_file):
+        if crash_check(all_vlist[mid], crash_testcase):
             end = mid
         else:
             start = mid + 1
@@ -104,10 +104,10 @@ def v8_change_branch(branch_version):
         return False
 
 
-def v8_exec(crash_input_file):
+def v8_exec(crash_testcase):
     setting_info = get_setting_info()
     execute_target = os.path.join(root_path, setting_info['execute_target'])
-    if common_tools.reliable_crash_chk(execute_target, crash_input_file, 1) == "Reliable":
+    if common_tools.reliable_crash_chk(execute_target, crash_testcase, 1) == "Reliable":
         return True
     else:
         return False
@@ -123,16 +123,16 @@ def v8_build():
     print "[*] - complete ninja -C out.gn/x64.release"
 
 
-def crash_check(version, crash_input_file):
+def crash_check(version, crash_testcase):
     if v8_change_branch(version):
         v8_build()
-        return v8_exec(crash_input_file)
+        return v8_exec(crash_testcase)
     else:
         print "[*] - Change branch error!"
         return None
 
 
-def search(crash_input_file, crash_lkgr_version=None):
+def search(crash_testcase, crash_lkgr_version=None):
     setting_info = setting_parser.get_setting_config()
     build_directory = os.path.join(root_path, setting_info['build_directory'])
     exec_directory = os.path.join(root_path, setting_info['exec_directory'])
@@ -152,9 +152,9 @@ def search(crash_input_file, crash_lkgr_version=None):
         v8_crash_version = crash_lkgr_version
 
     # searching
-    start_index, end_index = lkgr_searching(v8_crash_version, lkgr_vlist, all_vlist, crash_input_file)
+    start_index, end_index = lkgr_searching(v8_crash_version, lkgr_vlist, all_vlist, crash_testcase)
     if start_index is not None and end_index is not None:
-        commit_crash_version = binary_searching(start_index, end_index, all_vlist, crash_input_file)
+        commit_crash_version = binary_searching(start_index, end_index, all_vlist, crash_testcase)
     if commit_crash_version is None:
         print "[*] - Not Found Version"
         return None
@@ -165,21 +165,21 @@ def search(crash_input_file, crash_lkgr_version=None):
 if __name__ == "__main__":
     argv_len = len(sys.argv)
     if argv_len == 2:
-        crash_input_file = sys.argv[1]
+        crash_testcase = sys.argv[1]
         crash_lkgr_version = None
     elif argv_len == 3:
-        crash_input_file = sys.argv[1]
+        crash_testcase = sys.argv[1]
         crash_lkgr_version = sys.argv[2]
         if 'lkgr' not in crash_lkgr_version:
             print "[*] - Please enter only the lkgr version."
             exit(1)
     else:
-        print "[*] - useage : python commit_searcher.py [crash_input_file] (crash_lkgr_version)"
+        print "[*] - useage : python commit_searcher.py [crash_testcase] (crash_lkgr_version)"
         exit(1)
     setting_info = get_setting_info()
     execute_target = os.path.join(root_path, setting_info['exec_directory'], setting_info['execute_target'])
-    if common_tools.reliable_crash_chk(execute_target, crash_input_file, 10) != "Reliable":
-        search(crash_input_file, crash_lkgr_version)
+    if common_tools.reliable_crash_chk(execute_target, crash_testcase, 10) != "Reliable":
+        search(crash_testcase, crash_lkgr_version)
     else:
         print "[*] - Unreliable Crash_Dump"
         exit(1)

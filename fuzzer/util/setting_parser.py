@@ -19,11 +19,11 @@ def get_setting_config():
         build_directory = config.get('PATH', 'build_directory')
         exec_directory = config.get('PATH', 'exec_directory')
         execute_target = config.get('PATH', 'execute_target')
-        input_file = config.get('PATH', 'input_file')
+        testcase = config.get('PATH', 'testcase')
     else:
         print "setting.conf file does not exist."
 
     return {'build_directory': build_directory,
             'exec_directory': exec_directory,
             'execute_target': execute_target,
-            'input_file': input_file}
+            'testcase': testcase}

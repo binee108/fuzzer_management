@@ -33,15 +33,15 @@ def get_config_info():
         'manageweb_port': manageweb_port}
 
 
-def crash_upload(config_info, crash_dump_file_path, crash_input_file_path, crash_hash, reliable):
+def crash_upload(config_info, crash_dump_file_path, crash_testcase_path, crash_hash, reliable):
     """
     fuzzer로부터 받은 crash파일과 testcase파일을 관리 웹서버로 전송하는 함수입니다.
     requests 모듈을 사용하여 파일을 업로드한다.
     """
     if not os.path.exists(crash_dump_file_path):
         print "crash_dump_file_path error"
-    if not os.path.exists(crash_input_file_path):
-        print "crash_input_file_path error"
+    if not os.path.exists(crash_testcase_path):
+        print "crash_testcase_path error"
     url = "http://%s:%s/manage/crash_upload" % (config_info['manageweb_ip'], config_info['manageweb_port'])
 
     data = {
@@ -51,7 +51,7 @@ def crash_upload(config_info, crash_dump_file_path, crash_input_file_path, crash
     }
     multiple_files = [
         ('crash_dump', ('crash_dump.txt', open(crash_dump_file_path, 'rb'), 'text/plain')),
-        ('test_case', ('test_case.txt', open(crash_input_file_path, 'rb'), 'text/plain'))
+        ('test_case', ('test_case.txt', open(crash_testcase_path, 'rb'), 'text/plain'))
     ]
     try:
         r = requests.post(url=url, data=data, files=multiple_files)
@@ -60,20 +60,22 @@ def crash_upload(config_info, crash_dump_file_path, crash_input_file_path, crash
     except:
         print "url : " + url
         print "crash_dump_file_path : " + crash_dump_file_path
-        print "crash_input_file_path : " + crash_input_file_path
+        print "crash_testcase_path : " + crash_testcase_path
         print "config_info['server_id']: " + config_info['server_id']
         print "crash_upload() request.post Error"
 
 
-def start_main(crash_dump_file_path, crash_input_file_path):
+def start_main(crash_dump_file_path, crash_testcase_path, crash_hash, reliable):
     config_info = get_config_info()
-    crash_upload(config_info, crash_dump_file_path, crash_input_file_path)
+    crash_upload(config_info, crash_dump_file_path, crash_testcase_path, crash_hash, reliable)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print "[*] usage: python crash_uploader.py [crash_dump_file_path] [crash_input_file_path]"
+        print "[*] usage: python crash_uploader.py [crash_dump_file_path] [crash_testcase_path]"
     crash_dump_file_path = sys.argv[1]
-    crash_input_file_path = sys.argv[2]
+    crash_testcase_path = sys.argv[2]
+    crash_hash = sys.argv[3]
+    reliable = sys.argv[4]
     print "crash_dump_file_path : " + crash_dump_file_path
-    print "crash_input_file_path : " + crash_input_file_path
-    start_main(crash_dump_file_path, crash_input_file_path)
+    print "crash_testcase_path : " + crash_testcase_path
+    start_main(crash_dump_file_path, crash_testcase_path, crash_hash, reliable)
