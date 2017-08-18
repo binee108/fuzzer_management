@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import JsonResponse
 from django.utils import timezone
+from django.template import loader
 
 from management.models import Fuzzer
 from management.models import Fuzz_server
@@ -22,6 +23,17 @@ from management.forms import IssueAddForm
 from management.forms import IssueModifyForm
 
 import base64
+
+
+def gentella_html(request):
+    context = {}
+    # The template to be loaded as per gentelella.
+    # All resource paths for gentelella end in .html.
+
+    # Pick out the html file name from the url. And load that template.
+    load_template = request.path.split('/')[-1]
+    template = loader.get_template('app/' + load_template)
+    return HttpResponse(template.render(context, request))
 
 
 # /server/list
@@ -49,6 +61,9 @@ def server_modify(request, pk):
             return HttpResponseBadRequest("failed")
     else:
         # m_fuzz_server = Fuzz_server.objects.get(pk=pk)
+        # context = {
+        #     'm_fuzz_server': m_fuzz_server
+        # }
         server_modify_form = ServerMoifyForm(instance=m_fuzz_server)
         context = {
             'server_modify_form': server_modify_form
@@ -135,6 +150,9 @@ def fuzzer_modify(request, pk):
         return redirect('/fuzzer/view/' + str(m_fuzzer.id))
     else:
         # m_fuzz_server = Fuzz_server.objects.get(pk=pk)
+        # context = {
+        #     'm_fuzz_server': m_fuzz_server
+        # }
         fuzzer_modify_form = FuzzerMoifyForm(instance=m_fuzzer)
         context = {
             'fuzzer_modify_form': fuzzer_modify_form
@@ -192,6 +210,9 @@ def issue_modify(request, pk):
         else:
             return HttpResponseBadRequest("failed")
     else:
+        # context = {
+        #     'm_issue': m_issue
+        # }
         issue_modify_form = IssueModifyForm(instance=m_issue)
         context = {
             'issue_modify_form': issue_modify_form

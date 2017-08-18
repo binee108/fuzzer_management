@@ -1,0 +1,154 @@
+{% extends "app/base_site.html" %}
+
+{% block title %} Server List {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+<!-- command fucntion command -->
+<script>
+  function command_func(val1, val2){
+    var f = document.command_func;
+    f.server_id.value = val1;
+    f.command.value = val2;
+    f.submit();
+  }
+</script>
+<form method="POST" name="command_func" action="/manage/request_command">
+  {% csrf_token %}
+  <input type="hidden" name="server_id" value=""> 
+  <input type="hidden" name="command" value="">
+</form>
+
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="row">
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+            <h2>Server List</h2>
+            <div class="clearfix"></div>
+          </div>
+            <div class="x_content">
+              <table id="datatable" class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>ServerName</th>
+                    <th>ServerIP</th>
+                    <th>FuzzerName</th>
+                    <th>TargetApp</th>
+                    <th>Version</th>
+                    <th>WorkingStatus</th>
+                    <th>LastConnection</th>
+                    <th>ConnectionStatus</th>
+                    <th>Command</th>
+                  </tr>
+                </thead>
+
+
+                <tbody>
+                  <tr>
+                    <td>Tiger Nixon</td>
+                    <td>System Architect</td>
+                    <td>Edinburgh</td>
+                    <td>61</td>
+                    <td>2011/04/25</td>
+                    <td><span class="label label-danger">Stop</span></td>
+                    <td>$320,800</td>
+                    <td><span class="label label-success">Running</span></td>
+                    <td>
+                      <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-xs" type="button" aria-expanded="false">선택 <span class="caret"></span>
+                        </button>
+                        <ul role="menu" class="dropdown-menu">
+                          <li><a href="javascript:command_func('{{mfuzz.id}}', 'build')">Build</a>
+                          </li>
+                          <li><a href="javascript:command_func('{{mfuzz.id}}', 'start')">Start</a>
+                          </li>
+                          <li><a href="javascript:command_func('{{mfuzz.id}}', 'stop')">Stop</a>
+                          </li>
+                          <li><a href="javascript:command_func('{{mfuzz.id}}', 'reboot')">Reboot</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+
+                  {% for mfuzz in m_fuzz_server %}
+                  <tr style="cursor:hand;" onclick="location.href='/server/modify/{{mfuzz.id}}'">
+                    <td>{{mfuzz.server_name}}</td>
+                    <td>{{mfuzz.server_ip}}</td>
+                    <td>{{mfuzz.fuzzer.fuzzer_name}}
+                    <td>{{mfuzz.fuzz_target}}</td>
+                    <td>{{mfuzz.fuzz_version}}</td>
+
+                    {% if timedelay < mfuzz.last_working_time  %}
+                    <td><span class="label label-success">Running</span></td>
+                    {% else %}
+                    <td><span class="label label-danger">Stop</span></td>
+                    {% endif %}
+
+                    <td>{{mfuzz.last_connection_time}}</td>
+                    {% if timedelay < mfuzz.last_connection_time %}
+                    <td><span class="label label-success">Running</span></td>
+                    {% else %}
+                    <td><span class="label label-danger">Stop</span></td>
+                    {% endif %}
+                    <td>
+                      <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button" aria-expanded="false">선택 <span class="caret"></span>
+                        </button>
+                        <ul role="menu" class="dropdown-menu">
+                          <li><a href="javascript:command_func('{{mfuzz.id}}', 'build')">Build</a>
+                          </li>
+                          <li><a href="javascript:command_func('{{mfuzz.id}}', 'start')">Start</a>
+                          </li>
+                          <li><a href="javascript:command_func('{{mfuzz.id}}', 'stop')">Stop</a>
+                          </li>
+                          <li><a href="javascript:command_func('{{mfuzz.id}}', 'reboot')">Reboot</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                  </a>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <!-- Datatables -->
+  <script src="/static/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="/static/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+  <script src="/static/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+  <script src="/static/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+  <script src="/static/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="/static/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+  <script src="/static/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+  <script src="/static/vendors/jszip/dist/jszip.min.js"></script>
+  <script src="/static/vendors/pdfmake/build/pdfmake.min.js"></script>
+  <script src="/static/vendors/pdfmake/build/vfs_fonts.js"></script>
+{% endblock javascripts %}

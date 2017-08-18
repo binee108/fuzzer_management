@@ -1,7 +1,72 @@
-<p> Issue Modify </p>
-	
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{issue_modify_form.as_p}}
-  <button type="submit">modify</button>
-</form>
+{% extends "app/base_site.html" %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Issue Add</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            
+            <div class="x_content">
+              <br />
+              <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
+
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="app_name">App Name <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="text" id="app_name" name="app_name" value="{{m_issue.app_name}}" required="required" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="app_version">App Version <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="text" id="app_version" name="app_version" value="{{m_issue.app_version}}" required="required" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="issuer">Issuer <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="text" id="issuer" name="issuer" value="{{m_issue.issuer}}" required="required" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="poc_file">PoC File <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <small>Current PoC File : <a href="{{m_issue.poc_file.url}}">{{m_issue.poc_file.name}}</a></small></br>
+                    <input type="file" id="poc_file" name="poc_file" required="required" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="report_file">Report File <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <small>Current Report File : <a href="{{m_issue.poc_file.url}}">{{m_issue.poc_file.name}}</a></small></br>
+                    <input type="file" id="report_file" name="report_file" required="required" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                  <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                    <button class="btn btn-default" type="button" onclick = "location.href = 'fuzzer/list'">Cancel</button>
+                    <button class="btn btn-default" type="reset">Reset</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

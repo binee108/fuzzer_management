@@ -58,8 +58,8 @@ class FuzzerMoifyForm(forms.ModelForm):
 class IssueAddForm(forms.ModelForm):
     class Meta:
         model = Issue_info
-        fields = ['app_name', 'app_version', 'regression_version', 'issuer',
-                  'confirmer', 'issue_status', 'poc_file', 'report_file']
+        fields = ['app_name', 'app_version', 'issuer',
+                  'poc_file', 'report_file']
 
 
 class IssueModifyForm(forms.ModelForm):

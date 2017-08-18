@@ -45,6 +45,8 @@ def run_timeout(command_with_args, uselog_files=False, child_stdout=None, child_
             stderr=(child_stderr if uselog_files else subprocess.PIPE),
             preexec_fn=ulimit_set
         )
+        if not uselog_files:
+            child.communicate()
     except OSError as e:
         print("Tried to run : %r" % command_with_args)
         print("error : %s" % e)

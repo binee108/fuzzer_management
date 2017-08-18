@@ -1,49 +1,166 @@
-<p> Crash list </p>
-<table>
-  <tr>
-    <th>ServerName</th>
-    <th>ServerIP</th>
-    <th>TargetApp</th>
-    <th>Version</th>
-    <th>crash_hash</th>
-    <th>crash_reliable</th>
-    <th>regressions_version</th>
-    <th>crash_dump</th>
-    <th>test_case</th>
-    <th>report_time</th>
-    <th>Regression Search</th>
-    <th>Issue Forward</th>
-  </tr>
-  {% for m_crash in m_crash_list %}
-  <tr>
-    <td>{{m_crash.fuzz_server.server_name}}</td>
-    <td>{{m_crash.fuzz_server.server_ip}}</td>
-    <td>{{m_crash.fuzz_server.fuzz_target}}</td>
-    <td>{{m_crash.fuzz_server.fuzz_version}}</td>
-    <td>{{m_crash.crash_hash}}</td>
-    <td>{{m_crash.crash_reliable}}</td>
-    <td>{{m_crash.regressions_version}}</td>
-    <td><a href={{m_crash.crash_dump.url}}> crash dump </a></td>
-    <td><a href={{m_crash.test_case.url}}> testcase </a></td>
-    <td>{{m_crash.report_time}}</td>
-    <td>
-      <form action="/manage/request_command" method="POST" style="float:left">
-        {% csrf_token %}
-        <input type="hidden" name="server_id" value="{{m_crash.fuzz_server.id}}">
-        <input type="hidden" name="crash_id" value="{{m_crash.id}}">
-        <input type="hidden" name="type" value="crash_list">
-        <input type="hidden" name="command" value="regression">
-        <input type="submit" name="regression" value="Regression Search">
-      </form>
-    </td>
-    <td>
-      <form action="/crash/forward" method="POST" style="float:left">
-        {% csrf_token %}
-        <input type="hidden" name="crash_id" value="{{m_crash.id}}"> 
-        <input type="submit" name="forward" value="Forward">
-      </form>
-    </td>
-  </tr>
-      
-  {% endfor %}
-</table>
+{% extends "app/base_site.html" %}
+
+{% block title %} Table Dynamic {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+
+<!-- request_command button function -->
+<script> 
+  function request_command(val1, val2, val3, val4){ 
+  var f = document.request_command; 
+  f.server_id.value = val1; 
+  f.crash_id.value = val2; 
+  f.type.value = val3;
+  f.command.value = val4;
+  f.submit();
+  } 
+</script> 
+
+<form method="post" name="request_command" action="/manage/request_command"> 
+  {% csrf_token %}
+  <input type="hidden" value="" name="server_id"> 
+  <input type="hidden" value="" name="crash_id"> 
+  <input type="hidden" value="" name="type"> 
+  <input type="hidden" value="" name="command"> 
+</form> 
+
+<!-- forward button function -->
+<script>
+  function forward(val1){
+    var f = document.forward;
+    f.crash_id.value = val1
+  }
+</script>
+
+<form method="post" name="forward" action="/crash/forward">
+  {% csrf_token %}
+  <input type="hidden" value="" name="crash_id"> 
+</form>
+
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="row" style="overflow:visible;">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Crash List</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">Settings 1</a>
+                  </li>
+                  <li><a href="#">Settings 2</a>
+                  </li>
+                </ul>
+              </li>
+              <li><a class="close-link"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <table id="datatable" class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Server Name</th>
+                  <th>Server IP</th>
+                  <th>Fuzz_Target</th>
+                  <th>Fuzz Version</th>
+                  <th>Crash Hash</th>
+                  <th>Crash Reliable</th>
+                  <th>Regression Version</th>
+                  <th>Report Time</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for m_crash in m_crash_list %}
+                <tr style="cursor:pointer;" data-toggle="modal" data-target=".bs-{{m_crash_list.crash_id}}-modal-lg">
+                  <div class="modal fade bs-{{m_crash_list.crash_id}}-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                          </button>
+                          <h4 class="modal-title" id="myModalLabel">Crash Dump</h4>
+                        </div>
+                        <div class="modal-body">
+                          <h4>Crash Dump</h4>
+                          <p>{{m_crash.crash_dump.url}}</p>
+                        </div>
+                        <div class="modal-footer">
+                          <a href="{{m_crash.test_case.url}}" download style="float:left !important" type="button" class="btn btn-info">Testcase Download</a>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <td>{{m_crash.fuzz_server.server_name}}</td>
+                  <td>{{m_crash.fuzz_server.server_ip}}</td>
+                  <td>{{m_crash.fuzz_server.fuzz_target}}</td>
+                  <td>{{m_crash.fuzz_server.fuzz_version}}</td>
+                  <td>{{m_crash.crash_hash}}</td>
+                  {% if m_crash.reliable is 'Reliable' %}
+                  <td><span class="label label-success">{{m_crash.reliable}}</span></td>
+                  {% elif m_crash.reliable is 'Unreliable' %}
+                  <td><span class="label label-warning">{{m_crash.reliable}}</span></td>
+                  {% elif m_crash.reliable is 'None' %}
+                  <td><span class="label label-danger">{{m_crash.reliable}}</span></td>
+                  {% endif %}
+                  <td>{{m_crash.regression_version}}</td>
+                  <td>{{m_crash.report_time}}</td>
+                  <td>
+                    <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button" aria-expanded="false">선택 <span class="caret"></span>
+                    </button>
+                    <ul role="menu" class="dropdown-menu">
+                      <li>
+                        <a href="javascript:request_command('{{m_crash.fuzz_server.id}}','{{m_crash.id}}', 'crash_list','regression')">regression</a>
+                      </li>
+                      <li>
+                        <a href="javascript:forward('{{m_crash.id}}')">forward</a>
+                      </li>
+                    </ul>
+                  </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <!-- Datatables -->
+  <script src="/static/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="/static/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+  <script src="/static/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+  <script src="/static/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+  <script src="/static/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="/static/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+  <script src="/static/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+  <script src="/static/vendors/jszip/dist/jszip.min.js"></script>
+  <script src="/static/vendors/pdfmake/build/pdfmake.min.js"></script>
+  <script src="/static/vendors/pdfmake/build/vfs_fonts.js"></script>
+{% endblock javascripts %}

@@ -2,6 +2,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
+    url(r'^.*\.html', views.gentella_html, name='gentella'),
     url(r'^server/list$', views.server_list, name='server_list'),
     url(r'^server/modify/(?P<pk>\d+)/$', views.server_modify, name='server_modify'),
 
