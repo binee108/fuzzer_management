@@ -51,6 +51,10 @@ def server_list(request):
 def server_modify(request, pk):
     m_fuzz_server = get_object_or_404(Fuzz_server, pk=pk)
     if request.method == 'POST':
+        request.POST['fuzzer_name']
+        request.POST['fuzz_target']
+        request.POST['fuzz_version']
+        request.POST['fuzzer_name']
         server_modify_form = ServerMoifyForm(request.POST, request.FILES, instance=m_fuzz_server)
         if server_modify_form.is_valid():
             server_save = server_modify_form.save(commit=False)
