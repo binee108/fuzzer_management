@@ -1,4 +1,4 @@
-{% extends "app/base_site.html" %}
+{% extends "management/base_site.html" %}
 
 {% block title %} Fuzzer List {% endblock title %}
 
@@ -36,17 +36,17 @@
                 </thead>
                 <tbody>
                   {% for mfuzzer in m_fuzzers %}
-                  <tr style="cursor:hand;" onclick="location.href='/fuzzer/modify/{{mfuzzer.id}}'">
+                  <tr style="cursor:pointer;" onclick="location.href='/fuzzer/modify/{{mfuzzer.id}}'">
                     <td>{{mfuzzer.fuzzer_name}}</td>
                     <td>{{mfuzzer.app_name}}</td>
-                    <td><a href={{mfuzzer.build_script.url}} download>{{mfuzzer.build_script.name}}</a></td>
+                    <td onclick="event.cancelBubble=true;"><a href={{mfuzzer.build_script.url}} download>{{mfuzzer.build_script.name}}</a></td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
               <div class="ln_solid"></div>
               <div style="float: left;">
-                <a href="fuzzer/add" class="btn btn-success">Add</a>
+                <a href="/fuzzer/add" class="btn btn-success">Add</a>
               </div> 
             </div>
           </div>

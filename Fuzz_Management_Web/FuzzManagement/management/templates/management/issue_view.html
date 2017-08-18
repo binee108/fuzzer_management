@@ -1,40 +1,142 @@
-<p> Issue View </p>
-<table>
-  <tr>
-    <th>App Name</th>
-    <th>App Version</th>
-    <th>Regression Version</th>
-    <th>issuer</th>
-    <th>confirmer</th>
-    <th>issue_status</th>
-    <th>poc_file</th>
-    <th>report_file</th>
-    <th>report_time</th>
-    <th>Regression Search</th>
-  </tr>
-  <tr>
-    <td>{{m_issue.app_name}}</td>
-    <td>{{m_issue.app_version}}</td>
-    <td>{{m_issue.regression_version}}</td>
-    <td>{{m_issue.issuer}}</td>
-    <td>{{m_issue.confirmer}}</td>
-    <td>{{m_issue.issue_status}}</td>
-    <td><a href={{m_issue.poc_file.url}} download>{{m_issue.poc_file.name}}</a></td>
-    <td><a href={{m_issue.report_file.url}} download>{{m_issue.report_file.name}}</a></td>
-    <td>{{m_issue.report_time}}</td>
-    <td>
-      <form action="/manage/request_command" method="POST" style="float:left">
-        {% csrf_token %}
-        <input type="select" name="server_id" value="{{m_crash.fuzz_server.id}}"> 
-        <input type="hidden" name="issue_id" value="{{m_issue.id}}"> 
-        <select name="fuzzer_name" id="id_fuzzer_name" style="float:left">
-        {% for m_fuzz_server in m_fuzz_server_list %}
-          <option value={{m_fuzz_server.id}}>{{m_fuzz_server.server_name}}</option>
-        {% endfor %}
-        <input type="hidden" name="type" value="issue">
-        <input type="hidden" name="command" value="regression">
-        <input type="submit" name="regression" value="Regression Search">
-      </form>
-    </td>
-  </tr>
-</table>
+{% extends "management/base_site.html" %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+  {% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Crash List</h2>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+<!--             <table>
+              <tr>
+                <th>App Name</th>
+                <th>App Version</th>
+                <th>Regression Version</th>
+                <th>issuer</th>
+                <th>confirmer</th>
+                <th>issue_status</th>
+                <th>poc_file</th>
+                <th>report_file</th>
+                <th>report_time</th>
+                <th>Regression Search</th>
+              </tr>
+              <tr>
+                <td>{{m_issue.app_name}}</td>
+                <td>{{m_issue.app_version}}</td>
+                <td>{{m_issue.regression_version}}</td>
+                <td>{{m_issue.issuer}}</td>
+                <td>{{m_issue.confirmer}}</td>
+                <td>{{m_issue.issue_status}}</td>
+                <td><a href={{m_issue.poc_file.url}} download>{{m_issue.poc_file.name}}</a></td>
+                <td><a href={{m_issue.report_file.url}} download>{{m_issue.report_file.name}}</a></td>
+                <td>{{m_issue.report_time}}</td>
+                <td>
+                  <form action="/manage/request_command" method="POST" style="float:left">
+                    {% csrf_token %}
+                    <input type="hidden" name="server_id" value="{{m_crash.fuzz_server.id}}"> 
+                    <input type="hidden" name="issue_id" value="{{m_issue.id}}"> 
+                    <select name="fuzzer_name" id="id_fuzzer_name" style="float:left">
+                    {% for m_fuzz_server in m_fuzz_server_list %}
+                      <option value={{m_fuzz_server.id}}>{{m_fuzz_server.server_name}}</option>
+                    {% endfor %}
+                    <input type="hidden" name="type" value="issue">
+                    <input type="hidden" name="command" value="regression">
+                    <input type="submit" name="regression" value="Regression Search">
+                  </form>
+                </td>
+              </tr>
+            </table> -->
+            <table class="table table-bordered">
+                <tr>
+                  <th class="column-title col-md-2">App Name</th>
+                  <td>{{m_issue.app_name}}</td>
+                </tr>
+                <tr>
+                  <th class="column-title col-md-2">App Version</th>
+                  <td>{{m_issue.app_version}}</td>
+                </tr>
+                <tr>
+                  <th class="column-title col-md-2">issuer</th>
+                  <td>{{m_issue.issuer}}</td>
+                </tr>
+                <tr>
+                  <th class="column-title col-md-2">confirmer</th>
+                  <td>{{m_issue.confirmer}}</td>
+                </tr>
+                <tr>
+                  <th class="column-title col-md-2">PoC File</th>
+                  <td><a href={{m_issue.poc_file.url}} download>{{m_issue.poc_file.name}}</a></td>
+                </tr>
+                <tr>
+                  <th class="column-title col-md-2">Report File</th>
+                  <td><a href={{m_issue.report_file.url}} download>{{m_issue.report_file.name}}</a></td>
+                </tr>
+                <tr>
+                  <th class="column-title col-md-2">Regression Version</th>
+                  <td>{{m_issue.regression_version}}</td>
+                </tr>
+                <tr>
+                  <th class="column-title col-md-2">Report Time</th>
+                  <td>{{m_issue.report_time}}</td>
+                </tr>
+                <tr>
+                  <th class="column-title col-md-2">Action</th>
+                  <td>
+                    <form action="/manage/request_command" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="server_id" value="{{m_crash.fuzz_server.id}}"> 
+                      <input type="hidden" name="issue_id" value="{{m_issue.id}}"> 
+                      <input type="hidden" name="type" value="issue">
+                      <input type="hidden" name="command" value="regression">                      
+                      <div class="col-md-3 col-sm-3 col-xs-12">
+                        <select name="fuzzer_name" id="id_fuzzer_name" class="form-control">
+                          <option value="" selected> -- 선택 -- </option>
+                        {% for m_fuzz_server in m_fuzz_server_list %}
+                          <option value={{m_fuzz_server.id}}>{{m_fuzz_server.server_name}}</option>
+                        {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary">Regression Search</button>
+                      </div>
+                    </form>
+                  </td>
+                </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+
+{% block javascripts %}
+  {{ block.super }}
+  <!-- Datatables -->
+  <script src="/static/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="/static/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+  <script src="/static/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+  <script src="/static/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+  <script src="/static/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+  <script src="/static/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="/static/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+  <script src="/static/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+  <script src="/static/vendors/jszip/dist/jszip.min.js"></script>
+  <script src="/static/vendors/pdfmake/build/pdfmake.min.js"></script>
+  <script src="/static/vendors/pdfmake/build/vfs_fonts.js"></script>
+{% endblock javascripts %}

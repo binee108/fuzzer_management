@@ -60,14 +60,16 @@ def server_modify(request, pk):
         else:
             return HttpResponseBadRequest("failed")
     else:
-        # m_fuzz_server = Fuzz_server.objects.get(pk=pk)
-        # context = {
-        #     'm_fuzz_server': m_fuzz_server
-        # }
-        server_modify_form = ServerMoifyForm(instance=m_fuzz_server)
+        fuzzers = Fuzzer.objects.all()
+        m_fuzz_server = Fuzz_server.objects.get(pk=pk)
         context = {
-            'server_modify_form': server_modify_form
+            'm_fuzz_server': m_fuzz_server,
+            'fuzzers': fuzzers
         }
+        # server_modify_form = ServerMoifyForm(instance=m_fuzz_server)
+        # context = {
+        #     'server_modify_form': server_modify_form
+        # }
         return render(request, 'management/server_modify.html', context)
 
 
@@ -130,7 +132,9 @@ def fuzzer_add(request):
         fuzzer_add_form = FuzzerAddForm(request.POST, request.FILES)
         if fuzzer_add_form.is_valid():
             m_fuzzer = fuzzer_add_form.save()
-        return redirect('/fuzzer/view/' + str(m_fuzzer.id))
+            return redirect('/fuzzer/view/' + str(m_fuzzer.id))
+        else:
+            return redirect('/page_403.html')
     else:
         fuzzer_add_form = FuzzerAddForm()
         context = {
@@ -149,14 +153,13 @@ def fuzzer_modify(request, pk):
             fuzzer_modify_form.save()
         return redirect('/fuzzer/view/' + str(m_fuzzer.id))
     else:
-        # m_fuzz_server = Fuzz_server.objects.get(pk=pk)
-        # context = {
-        #     'm_fuzz_server': m_fuzz_server
-        # }
-        fuzzer_modify_form = FuzzerMoifyForm(instance=m_fuzzer)
         context = {
-            'fuzzer_modify_form': fuzzer_modify_form
+            'm_fuzzer': m_fuzzer
         }
+        # fuzzer_modify_form = FuzzerMoifyForm(instance=m_fuzzer)
+        # context = {
+        #     'fuzzer_modify_form': fuzzer_modify_form
+        # }
         return render(request, 'management/fuzzer_modify.html', context)
 
 
@@ -210,13 +213,13 @@ def issue_modify(request, pk):
         else:
             return HttpResponseBadRequest("failed")
     else:
-        # context = {
-        #     'm_issue': m_issue
-        # }
-        issue_modify_form = IssueModifyForm(instance=m_issue)
         context = {
-            'issue_modify_form': issue_modify_form
+            'm_issue': m_issue
         }
+        # issue_modify_form = IssueModifyForm(instance=m_issue)
+        # context = {
+        #     'issue_modify_form': issue_modify_form
+        # }
         return render(request, 'management/issue_modify.html', context)
 
 

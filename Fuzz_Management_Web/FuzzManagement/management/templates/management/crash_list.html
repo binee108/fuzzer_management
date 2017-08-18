@@ -1,4 +1,4 @@
-{% extends "app/base_site.html" %}
+{% extends "management/base_site.html" %}
 
 {% block title %} Table Dynamic {% endblock title %}
 
@@ -121,8 +121,8 @@
                   {% endif %}
                   <td>{{m_crash.regression_version}}</td>
                   <td>{{m_crash.report_time}}</td>
-                  <td>
-                    <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button" aria-expanded="false">선택 <span class="caret"></span>
+                  <td onclick="event.cancelBubble=true;">
+                    <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-xs" type="button" aria-expanded="false">선택 <span class="caret"></span>
                     </button>
                     <ul role="menu" class="dropdown-menu">
                       <li>
@@ -163,4 +163,11 @@
   <script src="/static/vendors/jszip/dist/jszip.min.js"></script>
   <script src="/static/vendors/pdfmake/build/pdfmake.min.js"></script>
   <script src="/static/vendors/pdfmake/build/vfs_fonts.js"></script>
+
+  <script type="text/javascript">
+    $('.dropdown-toggle').click(function(e) {
+      e.stopPropagation();
+      $(this).next('.dropdown-menu').toggle();
+    });
+  </script>
 {% endblock javascripts %}

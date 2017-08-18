@@ -1,4 +1,4 @@
-{% extends "app/base_site.html" %}
+{% extends "management/base_site.html" %}
 
 {% block title %} Server List {% endblock title %}
 
@@ -11,14 +11,16 @@
   <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 {% endblock stylesheets %}
 
+{% block content %}
 <!-- command fucntion command -->
-<script>
+
+<script type="text/javascript">
   function command_func(val1, val2){
     var f = document.command_func;
     f.server_id.value = val1;
     f.command.value = val2;
     f.submit();
-  }
+}
 </script>
 <form method="POST" name="command_func" action="/manage/request_command">
   {% csrf_token %}
@@ -26,8 +28,13 @@
   <input type="hidden" name="command" value="">
 </form>
 
+<!-- table row redirect -->
+<script type="text/javascript">
+  function redirect_modify(href) {
+    location.href= href;
+  }
+</script>
 
-{% block content %}
   <div class="right_col" role="main">
     <div class="row">
 
@@ -55,7 +62,7 @@
                 </thead>
                 <tbody>
                   {% for mfuzz in m_fuzz_server %}
-                  <tr style="cursor:pointer;" onclick="location.href='/server/modify/{{mfuzz.id}}'">
+                  <tr style="cursor:pointer;" onclick="redirect_modify('/server/modify/{{mfuzz.id}}')"">
                     <td>{{mfuzz.server_name}}</td>
                     <td>{{mfuzz.server_ip}}</td>
                     <td>{{mfuzz.fuzzer.fuzzer_name}}
@@ -75,8 +82,8 @@
                     <td><span class="label label-danger">Stop</span></td>
                     {% endif %}
                     <td>
-                      <div class="btn-group" onclick="event.cancelBubble=true;">
-                        <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button" aria-expanded="false">선택 <span class="caret"></span>
+                      <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-xs" type="button" aria-expanded="false">선택 <span class="caret"></span>
                         </button>
                         <ul role="menu" class="dropdown-menu">
                           <li><a href="javascript:command_func('{{mfuzz.id}}', 'build')">Build</a>
@@ -122,4 +129,11 @@
   <script src="/static/vendors/jszip/dist/jszip.min.js"></script>
   <script src="/static/vendors/pdfmake/build/pdfmake.min.js"></script>
   <script src="/static/vendors/pdfmake/build/vfs_fonts.js"></script>
+
+  <script type="text/javascript">
+    $('.dropdown-toggle').click(function(e) {
+      e.stopPropagation();
+      $(this).next('.dropdown-menu').toggle();
+    });
+  </script>
 {% endblock javascripts %}

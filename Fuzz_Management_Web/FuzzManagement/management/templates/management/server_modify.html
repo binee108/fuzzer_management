@@ -1,4 +1,4 @@
-{% extends "app/base_site.html" %}
+{% extends "management/base_site.html" %}
 
 {% block content %}
   <div class="right_col" role="main">
@@ -14,7 +14,8 @@
             
             <div class="x_content">
               <br />
-              <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
+              <form method="post" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
+                {% csrf_token %}
                 <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="server_name">Server Name <span class="required">*</span>
                   </label>
@@ -27,34 +28,39 @@
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="server_ip">Server IP <span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" id="server_ip" name="server_ip" value="{{m_fuzz_server.server_ip}" required="required" class="form-control col-md-7 col-xs-12">
+                    <input type="text" id="server_ip" name="server_ip" value="{{m_fuzz_server.server_ip}}" required="required" class="form-control col-md-7 col-xs-12">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fuzzer_name">Fuzzer Name <span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" id="fuzzer_name" name="fuzzer_name" value="{{m_fuzz_server.fuzzer.fuzzer_name}" required="required" class="form-control col-md-7 col-xs-12">
+                    <select id="fuzzer_name" name="fuzzer_name" class="form-control col-md-7 col-xs-12">
+                      <option value="" selected> -- 선택 -- </option>
+                      {% for fuzzer in fuzzers %} 
+                        <option value="{{fuzzer.id}}">{{fuzzer.fuzzer_name}}</option>
+                      {% endfor%}
+                    </select>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fuzz_target">Target App <span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" id="fuzz_target" name="fuzz_target" value="{{m_fuzz_server.fuzz_target}" required="required" class="form-control col-md-7 col-xs-12">
+                    <input type="text" id="fuzz_target" name="fuzz_target" value="{{m_fuzz_server.fuzz_target}}" required="required" class="form-control col-md-7 col-xs-12">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fuzz_version">Version <span class="required">*</span>
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" id="fuzz_version" name="fuzz_version" value="{{m_fuzz_server.fuzz_version}" required="required" class="form-control col-md-7 col-xs-12">
+                    <input type="text" id="fuzz_version" name="fuzz_version" value="{{m_fuzz_server.fuzz_version}}" required="required" class="form-control col-md-7 col-xs-12">
                   </div>
                 </div>
                 <div class="ln_solid"></div>
                 <div class="form-group">
                   <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                    <button class="btn btn-default" type="button" onclick = "location.href = 'server/list'">Cancel</button>
+                    <button class="btn btn-default" type="button" onclick = "location.href = '/server/list'">Cancel</button>
   		              <button class="btn btn-default" type="reset">Reset</button>
                     <button type="submit" class="btn btn-success">Submit</button>
                   </div>

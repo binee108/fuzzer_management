@@ -1,4 +1,4 @@
-{% extends "app/base_site.html" %}
+{% extends "management/base_site.html" %}
 
 {% block content %}
   <div class="right_col" role="main">
@@ -14,8 +14,8 @@
             
             <div class="x_content">
               <br />
-              <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
-
+              <form method="post" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="app_name">App Name <span class="required">*</span>
                   </label>
@@ -54,7 +54,7 @@
                 <div class="ln_solid"></div>
                 <div class="form-group">
                   <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                    <button class="btn btn-default" type="button" onclick = "location.href = 'issue_list'">Cancel</button>
+                    <button class="btn btn-default" type="button" onclick = "location.href = '/issue/list'">Cancel</button>
   		              <button class="btn btn-default" type="reset">Reset</button>
                     <button type="submit" class="btn btn-success">Submit</button>
                   </div>
