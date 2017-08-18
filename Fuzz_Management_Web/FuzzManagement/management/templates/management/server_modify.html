@@ -36,9 +36,12 @@
                   </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <select id="fuzzer_name" name="fuzzer_name" class="form-control col-md-7 col-xs-12">
-                      <option value="" selected> -- 선택 -- </option>
                       {% for fuzzer in fuzzers %} 
-                        <option value="{{fuzzer.id}}">{{fuzzer.fuzzer_name}}</option>
+                      {% if fuzzer.fuzzer_name is m_fuzz_server.fuzzer.fuzzer_name %}
+                        <option value="{{fuzzer.id}} selected">{{fuzzer.fuzzer_name}}</option>
+                      {% else %}
+                        <option value="{{fuzzer.id}} selected">{{fuzzer.fuzzer_name}}</option>
+                      {% endif %}
                       {% endfor%}
                     </select>
                   </div>
